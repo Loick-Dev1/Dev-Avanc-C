@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AdvancedDevSample.Api/AdvancedDevSample.Api.csproj" />
+  <Project Path="AdvancedDevSample.Application/AdvancedDevSample.Application.csproj" />
+  <Project Path="AdvancedDevSample.Domain/AdvancedDevSample.Domain.csproj" />
+  <Project Path="AdvancedDevSample.Infrastructure/AdvancedDevSample.Infrastructure.csproj" />
+  <Project Path="AdvancedDevSample.Tests/AdvancedDevSample.Tests.csproj" Id="b8d2f8c4-c840-469c-a969-06d6e1e2527f" />
+</Solution>
