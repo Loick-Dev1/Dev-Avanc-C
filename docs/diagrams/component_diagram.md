@@ -3,45 +3,45 @@
 This diagram shows the main components of the system and their interactions.
 
 ```mermaid
-componentDiagram
-    package "Client Layer" {
-        [Web Client/Postman] as Client
-    }
+graph TD
+    subgraph ClientLayer [Client Layer]
+        Client[Web Client/Postman]
+    end
 
-    package "API Layer" {
-        [ProductsController] as PC
-        [OrdersController] as OC
-    }
+    subgraph APILayer [API Layer]
+        PC[ProductsController]
+        OC[OrdersController]
+    end
 
-    package "Application Layer" {
-        [ProductService] as PS
-        [OrderService] as OS
-    }
+    subgraph ApplicationLayer [Application Layer]
+        PS[ProductService]
+        OS[OrderService]
+    end
 
-    package "Domain Layer" {
-        [Product Entity] as PE
-        [Order Entity] as OE
-    }
+    subgraph DomainLayer [Domain Layer]
+        PE[Product Entity]
+        OE[Order Entity]
+    end
 
-    package "Infrastructure Layer" {
-        [EfProductRepository] as EPR
-        [EfOrderRepository] as EOR
-        [Data Store] as DS
-    }
+    subgraph InfrastructureLayer [Infrastructure Layer]
+        EPR[EfProductRepository]
+        EOR[EfOrderRepository]
+        DS[Data Store]
+    end
 
-    Client --> PC : HTTP/JSON
-    Client --> OC : HTTP/JSON
+    Client -->|HTTP/JSON| PC
+    Client -->|HTTP/JSON| OC
 
-    PC --> PS : Uses
-    OC --> OS : Uses
+    PC -->|Uses| PS
+    OC -->|Uses| OS
 
-    PS --> EPR : Uses
-    OS --> EOR : Uses
-    OS --> EPR : Uses (Check Product)
+    PS -->|Uses| EPR
+    OS -->|Uses| EOR
+    OS -->|Uses| EPR
 
-    EPR --> DS : Read/Write
-    EOR --> DS : Read/Write
+    EPR -->|Read/Write| DS
+    EOR -->|Read/Write| DS
 
-    PS ..> PE : Manipulates
-    OS ..> OE : Manipulates
+    PS -.->|Manipulates| PE
+    OS -.->|Manipulates| OE
 ```
