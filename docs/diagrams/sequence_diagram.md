@@ -9,12 +9,11 @@ sequenceDiagram
     participant Service as OrderService
     participant ProdRepo as ProductRepository
     participant OrderRepo as OrderRepository
-    participant Order as OrderEntity
 
     Client->>API: POST /api/orders (CreateOrderRequest)
     API->>Service: CreateOrder(request)
     
-    create participant Order
+    create participant Order as OrderEntity
     Service->>Order: new Order()
 
     loop For each item in request
