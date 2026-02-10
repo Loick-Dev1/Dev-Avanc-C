@@ -1,51 +1,66 @@
 ﻿using AdvancedDevSample.Domain.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AdvancedDevSample.Domain.Entities
 {
     public class Product
     {
+        public Guid Id { get; private set; }
+        public decimal Price { get; private set; }
+        public bool IsActive { get; private set; }
+        public Guid ProviderId { get; private set; } // Foreign Key
+
+        // For EF Core / Serialization
+        private Product() { }
+
+        public Product(Guid id, decimal price, bool isActive, Guid providerId)
+        {
+            if (providerId == Guid.Empty) throw new DomainException("Provider is required.");
+
+            Id = id;
+            Price = price;
+            IsActive = isActive;
+            ProviderId = providerId;
+        }
+
+        // Overload for backward compatibility (optional but useful for migration steps)
+        // Mark as Obsolete if we want to force migration later
+        public Product(Guid id, decimal price, bool isActive) 
+            : this(id, price, isActive, Guid.Empty) 
+        {
+            // Allow empty provider for legacy data/tests momentarily? 
+            // Or remove this constructor completely?
+            // Let's keep it but defaulting to Empty for now to let existing code compile,
+            // but normally we should refactor everything. 
+            // Actually, based on previous error analysis, let's keep it simple and clean.
+            // If I remove it, I must fix all usages. 
+            // Let's keep it but assign Guid.Empty (or a default provider ID if we had one).
+        }
         
-            public Guid Id { get; private set; } //Identité
-            public decimal Price { get; private set; }
-            public bool IsActive { get; private set; } //false par défaut
-            public Product()
-            {
-                IsActive = true;
-            }
-            public Product(Guid id, decimal price, bool isActive)
-            {   
-                Id = id;
-                Price = price;
-                IsActive = isActive;
-            }
+        public void ChangePrice(decimal newPrice)
+        {
+            if (newPrice <= 0)
+                throw new DomainException("Le prix doit etre positif");
 
-            public void ChangePrice(decimal newPrice) //Comportement
-            { if (newPrice <= 0) // Invariant
-                    throw new DomainException("Le prix doit etre positif");
+            if (!IsActive)
+                throw new DomainException("Produit Inactif");
 
-                if (!IsActive) //Règle Métier
-                    throw new DomainException("Produit Inactif");
+            Price = newPrice;
+        }
 
-                Price = newPrice;
-            }
+        public void ApplyDiscount(decimal discount)
+        {
+            ChangePrice(Price - discount);
+        }
 
-            public void ApplyDiscount(decimal discount)
-            {
-                ChangePrice(Price - discount);
-            }
+        public void Activate()
+        {
+            IsActive = true;
+        }
 
-            public void Activate()
-            {
-                IsActive = true;
-            }
-
-            public void Desactivate()
-            {
-                IsActive = false;
-            }
-
+        public void Desactivate()
+        {
+            IsActive = false;
+        }
     }
 }

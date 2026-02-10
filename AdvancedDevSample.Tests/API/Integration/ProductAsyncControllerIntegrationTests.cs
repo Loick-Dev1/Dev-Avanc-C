@@ -19,20 +19,29 @@ namespace AdvancedDevSample.Tests.API.Integration
             _repo = (InMemoryProductRepositoryAsync)factory.Services.GetRequiredService<InMemoryProductRepositoryAsync>();
         }
 
-        [Fact]
+        private async Task AuthenticateAsync()
+        {
+            var loginRequest = new LoginRequest { Email = "john.doe@example.com", Password = "password" };
+            var response = await _client.PostAsJsonAsync("/api/auth/login", loginRequest);
+            response.EnsureSuccessStatusCode();
+            var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse!.Token);
+        }
 
+        [Fact]
         public async Task ChangePrice_Should_Return_No_Content_And_Save_Product()
         {
+            await AuthenticateAsync();
             //Arrange
-            var product = new Product();
+            var product = new Product(Guid.NewGuid(), 10m, true, Guid.NewGuid());
             product.ChangePrice(10);
             _repo.Seed(product);
 
             var request = new ChangePriceRequest { NewPrice = 20 };
 
             //Act
-            var response = await _client.PutAsJsonAsync(
-                $"/api/products/productasync/{product.Id}/price",
+            var response = await _client.PatchAsJsonAsync(
+                $"/api/products/{product.Id}/price",
                 request
             );
 

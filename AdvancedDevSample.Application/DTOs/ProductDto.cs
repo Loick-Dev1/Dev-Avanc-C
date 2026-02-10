@@ -7,5 +7,6 @@ namespace AdvancedDevSample.Application.DTOs
         public Guid Id { get; set; }
         public decimal Price { get; set; }
         public bool IsActive { get; set; }
+        public Guid ProviderId { get; set; }
     }
 }

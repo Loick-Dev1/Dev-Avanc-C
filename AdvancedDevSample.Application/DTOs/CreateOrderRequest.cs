@@ -6,6 +6,8 @@ namespace AdvancedDevSample.Application.DTOs
 {
     public class CreateOrderRequest
     {
+        public Guid CustomerId { get; set; }
+        
         [Required]
         public List<CreateOrderItemRequest> Items { get; set; }
     }

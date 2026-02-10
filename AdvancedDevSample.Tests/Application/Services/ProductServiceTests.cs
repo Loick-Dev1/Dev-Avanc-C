@@ -4,22 +4,24 @@ using AdvancedDevSample.Tests.Application.Fakes;
 using AdvancedDevSample.Domain.Entities;
 using Xunit;
 using System;
+using System.Threading.Tasks;
 
 namespace AdvancedDevSample.Tests.Application.Services
 {
     public class ProductServiceTests
     {
         [Fact]
-        public void ChangeProductPrice_Should_Save_Product_When_Price_Is_Valid()
+        public async Task ChangeProductPrice_Should_Save_Product_When_Price_Is_Valid()
         {
             // Arrange
-            var product = new Product(Guid.NewGuid(), 10m, true); // état initial valide
+            var product = new Product(Guid.NewGuid(), 10m, true, Guid.NewGuid()); // état initial valide
             var repo = new FakeProductRepository(product);
-            var service = new ProductService(repo);
+            // Passing null for IProviderRepository as it is not used in this test
+            var service = new ProductService(repo, null!);
 
             // Act
             var request = new ChangePriceRequest { NewPrice = 20m };
-            service.ChangeProductPrice(product.Id, request.NewPrice);
+            await service.ChangeProductPriceAsync(product.Id, request.NewPrice);
 
             // Assert
             Assert.Equal(20m, product.Price);

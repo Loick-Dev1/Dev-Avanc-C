@@ -59,6 +59,11 @@ namespace AdvancedDevSample.Infrastructure.Repositories
             return await Task.FromResult(GetById(id));
         }
 
+        public async Task<IEnumerable<Order>> GetAllAsync()
+        {
+            return await Task.FromResult(GetAll());
+        }
+
         public async Task SaveAsync(Order order)
         {
             Save(order);

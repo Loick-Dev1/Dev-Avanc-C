@@ -12,30 +12,31 @@ namespace AdvancedDevSample.Api.Controllers
 {
     [ApiController]
     [Route("api/products")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly ProductService _productService;
-        private readonly IProductRepositoryAsync _repository;
 
-        public ProductsController(ProductService productService, IProductRepositoryAsync repository)
+        public ProductsController(ProductService productService)
         {
             _productService = productService;
-            _repository = repository;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProductDto>> GetAll()
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
-            var products = _productService.GetAllProducts();
+            var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ProductDto> GetProduct(Guid id)
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        public async Task<ActionResult<ProductDto>> GetProduct(Guid id)
         {
             try
             {
-                var product = _productService.GetProductById(id);
+                var product = await _productService.GetProductByIdAsync(id);
                 return Ok(product);
             }
             catch (ApplicationServiceException ex)
@@ -45,15 +46,20 @@ namespace AdvancedDevSample.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateProductRequest request)
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var id = _productService.CreateProduct(request);
+                var id = await _productService.CreateProductAsync(request);
                 return CreatedAtAction(nameof(GetProduct), new { id }, null);
+            }
+            catch (ApplicationServiceException ex)
+            {
+                return BadRequest(ex.Message); // Provider not found
             }
             catch (DomainException ex)
             {
@@ -62,14 +68,14 @@ namespace AdvancedDevSample.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, [FromBody] UpdateProductRequest request)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                _productService.UpdateProduct(id, request);
+                await _productService.UpdateProductAsync(id, request);
                 return NoContent();
             }
             catch (ApplicationServiceException ex)
@@ -83,11 +89,11 @@ namespace AdvancedDevSample.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                _productService.DeleteProduct(id);
+                await _productService.DeleteProductAsync(id);
                 return NoContent();
             }
             catch (ApplicationServiceException ex)
@@ -96,13 +102,13 @@ namespace AdvancedDevSample.Api.Controllers
             }
         }
 
-        [HttpPut("{id}/price")]
-        public IActionResult ChangePrice(Guid id, [FromBody] ChangePriceRequest request)
+        [HttpPatch("{id}/price")]
+        public async Task<IActionResult> ChangePrice(Guid id, [FromBody] ChangePriceRequest request)
         {
             try
             {
-                _productService.ChangeProductPrice(id, request.NewPrice);
-                return NoContent(); //204
+                await _productService.ChangeProductPriceAsync(id, request.NewPrice);
+                return NoContent();
             }
             catch (ApplicationServiceException ex) 
             {
@@ -114,28 +120,49 @@ namespace AdvancedDevSample.Api.Controllers
             }
         }
 
-        [HttpPut("productasync/{id}/price")]
-        public async Task<IActionResult> ChangePriceAsync(Guid id, [FromBody] ChangePriceRequest request)
+        [HttpPatch("{id}/discount")]
+        public async Task<IActionResult> ApplyDiscount(Guid id, [FromQuery] decimal discount)
         {
-            try
+             try
             {
-                var product = await _repository.GetByIdAsync(id);
-                if (product is null)
-                    return NotFound("Produit introuvable");
-
-                product.ChangePrice(request.NewPrice);
-                await _repository.SaveAsync(product);
-
+                await _productService.ApplyProductDiscountAsync(id, discount);
                 return NoContent();
             }
-            catch (DomainException ex)
+             catch (ApplicationServiceException ex) 
+            {
+                return NotFound(ex.Message);
+            }
+             catch (DomainException ex) 
             {
                 return BadRequest(ex.Message);
             }
-            catch (Exception)
+        }
+        
+        [HttpPatch("{id}/activate")]
+         public async Task<IActionResult> Activate(Guid id)
+        {
+             try
             {
-                // Laisser le middleware global gérer le logging / détail si présent
-                return StatusCode(500, "Erreur serveur lors du changement de prix.");
+                await _productService.ActivateProductAsync(id);
+                return NoContent();
+            }
+             catch (ApplicationServiceException ex) 
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}/desactivate")]
+         public async Task<IActionResult> Desactivate(Guid id)
+        {
+             try
+            {
+                await _productService.DesactivateProductAsync(id);
+                return NoContent();
+            }
+             catch (ApplicationServiceException ex) 
+            {
+                return NotFound(ex.Message);
             }
         }
     }

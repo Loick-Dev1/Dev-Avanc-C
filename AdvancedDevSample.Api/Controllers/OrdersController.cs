@@ -5,11 +5,13 @@ using AdvancedDevSample.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AdvancedDevSample.Api.Controllers
 {
     [ApiController]
     [Route("api/orders")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly OrderService _orderService;
@@ -20,18 +22,18 @@ namespace AdvancedDevSample.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<OrderDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAll()
         {
-            var orders = _orderService.GetAllOrders();
+            var orders = await _orderService.GetAllOrdersAsync();
             return Ok(orders);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<OrderDto> GetOrder(Guid id)
+        public async Task<ActionResult<OrderDto>> GetOrder(Guid id)
         {
             try
             {
-                var order = _orderService.GetOrderById(id);
+                var order = await _orderService.GetOrderByIdAsync(id);
                 return Ok(order);
             }
             catch (ApplicationServiceException ex)
@@ -41,14 +43,14 @@ namespace AdvancedDevSample.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateOrderRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var id = _orderService.CreateOrder(request);
+                var id = await _orderService.CreateOrderAsync(request);
                 return CreatedAtAction(nameof(GetOrder), new { id }, null);
             }
             catch (ApplicationServiceException ex)

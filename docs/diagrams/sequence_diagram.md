@@ -10,6 +10,7 @@ sequenceDiagram
     participant ProdRepo as ProductRepository
     participant OrderRepo as OrderRepository
 
+    Note over Client, API: Request must include 'Authorization: Bearer <token>'
     Client->>API: POST /api/orders (CreateOrderRequest)
     API->>Service: CreateOrder(request)
     

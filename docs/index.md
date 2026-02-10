@@ -10,6 +10,8 @@ This project demonstrates a Clean/Onion Architecture implementation in .NET.
 * **Domain-Driven Design (DDD)**: Rich Domain Models, Aggregates.
 * **CQRS Pattern**: Separation of Commands and Queries (via Services).
 * **Repository Pattern**: Abstraction of data access.
+* **Security**: JWT Authentication & Role-Based Authorization.
+* **Full Ecosystem**: Products, Orders, Customers, Providers.
 
 ## Documentation Sections
 

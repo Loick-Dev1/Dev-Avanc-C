@@ -129,11 +129,22 @@ namespace AdvancedDevSample.Infrastructure.Repositories
             }
         }
 
+        public async Task<IEnumerable<Product>> GetAllAsync()
+        {
+            return await Task.FromResult(GetAll());
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            Delete(id);
+            await Task.CompletedTask;
+        }
+
         // Helpers de mapping
         private static Product ToDomain(ProductEntity e) =>
-            new Product(id: e.Id, price: e.Price, isActive: e.IsActive);
+            new Product(id: e.Id, price: e.Price, isActive: e.IsActive, providerId: e.ProviderId);
 
         private static ProductEntity ToEntity(Product p) =>
-            new ProductEntity { Id = p.Id, Price = p.Price, IsActive = p.IsActive };
+            new ProductEntity { Id = p.Id, Price = p.Price, IsActive = p.IsActive, ProviderId = p.ProviderId };
     }
 }

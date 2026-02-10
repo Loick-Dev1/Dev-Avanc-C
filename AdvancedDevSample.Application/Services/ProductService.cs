@@ -2,60 +2,65 @@
 using AdvancedDevSample.Application.Exceptions;
 using AdvancedDevSample.Domain.Entities;
 using AdvancedDevSample.Domain.Interfaces.Products;
+using AdvancedDevSample.Domain.Interfaces.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace AdvancedDevSample.Application.Services
 {
     public class ProductService
     {
-        private readonly IProductRepository _repository;
+        private readonly IProductRepositoryAsync _repository;
+        private readonly IProviderRepository _providerRepository;
 
-        public ProductService(IProductRepository repository)
+        public ProductService(IProductRepositoryAsync repository, IProviderRepository providerRepository)
         {
             _repository = repository;
+            _providerRepository = providerRepository;
         }
 
-        // CRUD publics
-        public IEnumerable<ProductDto> GetAllProducts()
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
-            var products = _repository.GetAll();
+            var products = await _repository.GetAllAsync();
             return products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 Price = p.Price,
-                IsActive = p.IsActive
+                IsActive = p.IsActive,
+                ProviderId = p.ProviderId
             });
         }
 
-        public ProductDto GetProductById(Guid productId)
+        public async Task<ProductDto> GetProductByIdAsync(Guid productId)
         {
-            var product = GetProduct(productId);
+            var product = await GetProduct(productId);
             return new ProductDto
             {
                 Id = product.Id,
                 Price = product.Price,
-                IsActive = product.IsActive
+                IsActive = product.IsActive,
+                ProviderId = product.ProviderId
             };
         }
 
-        public Guid CreateProduct(CreateProductRequest request)
+        public async Task<Guid> CreateProductAsync(CreateProductRequest request)
         {
-            // validation par attributs attendue côté controller, ici création de l'entité
-            var product = new Product(Guid.NewGuid(), request.Price, request.IsActive);
-            _repository.Add(product);
+            var provider = await _providerRepository.GetByIdAsync(request.ProviderId);
+            if (provider == null) throw new ApplicationServiceException("Fournisseur introuvable", System.Net.HttpStatusCode.BadRequest);
+
+            var product = new Product(Guid.NewGuid(), request.Price, request.IsActive, request.ProviderId);
+            await _repository.SaveAsync(product);
             return product.Id;
         }
 
-        public void UpdateProduct(Guid productId, UpdateProductRequest request)
+        public async Task UpdateProductAsync(Guid productId, UpdateProductRequest request)
         {
-            var product = GetProduct(productId);
+            var product = await GetProduct(productId);
 
             if (request.Price.HasValue)
             {
-                // utilisation du comportement du domaine pour préserver les invariants
                 product.ChangePrice(request.Price.Value);
             }
 
@@ -65,49 +70,49 @@ namespace AdvancedDevSample.Application.Services
                 else product.Desactivate();
             }
 
-            _repository.Update(product);
+            await _repository.SaveAsync(product);
         }
 
-        public void DeleteProduct(Guid productId)
+        public async Task DeleteProductAsync(Guid productId)
         {
-            // délégation au repository
-            _repository.Delete(productId);
+            await _repository.DeleteAsync(productId);
         }
 
-        // Fonctions métier existantes
-        public void ChangeProductPrice(Guid productId, decimal newPrice)    
+        // Domain logic wrappers
+        public async Task ChangeProductPriceAsync(Guid productId, decimal newPrice)    
         {
-            var product = GetProduct(productId);
+            var product = await GetProduct(productId);
             product.ChangePrice(newPrice);
-            _repository.Save(product);
+            await _repository.SaveAsync(product);
         }
 
-        public void ApplyProductDiscount(Guid productId, decimal discount)
+        public async Task ApplyProductDiscountAsync(Guid productId, decimal discount)
         {
-            var product = GetProduct(productId);
-            product.Activate();
+            var product = await GetProduct(productId);
+            product.Activate(); // Ensure active before discount? or leave as is?
             product.ApplyDiscount(discount);
-            _repository.Save(product);
+            await _repository.SaveAsync(product);
         }
 
-        public void ActivateProduct(Guid produtId)
+        public async Task ActivateProductAsync(Guid produtId)
         {
-            var product = GetProduct(produtId);
+            var product = await GetProduct(produtId);
             product.Activate();
-            _repository.Save(product);
+            await _repository.SaveAsync(product);
         }
 
-        public void DesactivateProduct(Guid productId)
+        public async Task DesactivateProductAsync(Guid productId)
         {
-            var product = GetProduct(productId);
+            var product = await GetProduct(productId);
             product.Desactivate();
-            _repository.Save(product);
+            await _repository.SaveAsync(product);
         }
 
-        private Product GetProduct(Guid productId)
+        private async Task<Product> GetProduct(Guid productId)
         {
-            return _repository.GetById(productId)
-                ?? throw new ApplicationServiceException("Produit introuvable", System.Net.HttpStatusCode.NotFound);
+            var product = await _repository.GetByIdAsync(productId);
+            if (product == null) throw new ApplicationServiceException("Produit introuvable", System.Net.HttpStatusCode.NotFound);
+            return product;
         }
     }
 }

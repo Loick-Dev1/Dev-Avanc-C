@@ -12,7 +12,7 @@ namespace AdvancedDevSample.Tests.Domain.Entities
         {
             // Arrange
             var order = new Order();
-            var product = new Product(Guid.NewGuid(), 100m, true);
+            var product = new Product(Guid.NewGuid(), 100m, true, Guid.NewGuid());
 
             // Act
             order.AddItem(product, 2);
@@ -27,7 +27,7 @@ namespace AdvancedDevSample.Tests.Domain.Entities
         {
             // Arrange
             var order = new Order();
-            var product = new Product(Guid.NewGuid(), 100m, true);
+            var product = new Product(Guid.NewGuid(), 100m, true, Guid.NewGuid());
             order.AddItem(product, 1);
 
             // Act
@@ -42,7 +42,7 @@ namespace AdvancedDevSample.Tests.Domain.Entities
         public void AddItem_Should_Throw_If_Quantity_Invalid()
         {
             var order = new Order();
-            var product = new Product(Guid.NewGuid(), 100m, true);
+            var product = new Product(Guid.NewGuid(), 100m, true, Guid.NewGuid());
 
             Assert.Throws<DomainException>(() => order.AddItem(product, 0));
         }

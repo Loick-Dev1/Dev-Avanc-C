@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AdvancedDevSample.Tests.Application.Fakes
 {
-    public class FakeProductRepository : IProductRepository
+    public class FakeProductRepository : IProductRepository, IProductRepositoryAsync
     {
         public bool WasSaved { get; private set; }
 
@@ -42,6 +42,19 @@ namespace AdvancedDevSample.Tests.Application.Fakes
         public void Delete(Guid id)
         {
             // No-op for fake
+        }
+
+        public Task<Product> GetByIdAsync(Guid id) => Task.FromResult(GetById(id));
+        public Task<IEnumerable<Product>> GetAllAsync() => Task.FromResult(GetAll());
+        public Task SaveAsync(Product product)
+        {
+            Save(product);
+            return Task.CompletedTask;
+        }
+        public Task DeleteAsync(Guid id)
+        {
+            Delete(id);
+            return Task.CompletedTask;
         }
     }
 }

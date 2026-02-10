@@ -9,5 +9,7 @@ namespace AdvancedDevSample.Application.DTOs
         public decimal Price { get; set; }
 
         public bool IsActive { get; set; } = true;
+        [Required]
+        public Guid ProviderId { get; set; }
     }
 }

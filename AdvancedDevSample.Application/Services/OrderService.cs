@@ -1,47 +1,57 @@
 using AdvancedDevSample.Application.DTOs;
 using AdvancedDevSample.Application.Exceptions;
 using AdvancedDevSample.Domain.Entities;
+using AdvancedDevSample.Domain.Interfaces.Customers;
 using AdvancedDevSample.Domain.Interfaces.Orders;
 using AdvancedDevSample.Domain.Interfaces.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AdvancedDevSample.Application.Services
 {
     public class OrderService
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IProductRepository _productRepository;
+        private readonly IOrderRepositoryAsync _orderRepository;
+        private readonly IProductRepositoryAsync _productRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository)
+        public OrderService(
+            IOrderRepositoryAsync orderRepository, 
+            IProductRepositoryAsync productRepository,
+            ICustomerRepository customerRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _customerRepository = customerRepository;
         }
 
-        public IEnumerable<OrderDto> GetAllOrders()
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
         {
-            var orders = _orderRepository.GetAll();
+            var orders = await _orderRepository.GetAllAsync();
             return orders.Select(ToDto);
         }
 
-        public OrderDto GetOrderById(Guid id)
+        public async Task<OrderDto> GetOrderByIdAsync(Guid id)
         {
-            var order = _orderRepository.GetById(id);
+            var order = await _orderRepository.GetByIdAsync(id);
             if (order == null)
                 throw new ApplicationServiceException("Commande introuvable", System.Net.HttpStatusCode.NotFound);
 
             return ToDto(order);
         }
 
-        public Guid CreateOrder(CreateOrderRequest request)
+        public async Task<Guid> CreateOrderAsync(CreateOrderRequest request)
         {
-            var order = new Order();
+            var customer = await _customerRepository.GetByIdAsync(request.CustomerId);
+            if (customer == null) throw new ApplicationServiceException("Client introuvable", System.Net.HttpStatusCode.BadRequest);
+
+            var order = new Order(request.CustomerId);
 
             foreach (var item in request.Items)
             {
-                var product = _productRepository.GetById(item.ProductId);
+                var product = await _productRepository.GetByIdAsync(item.ProductId);
                 if (product == null)
                     throw new ApplicationServiceException($"Produit {item.ProductId} introuvable", System.Net.HttpStatusCode.BadRequest);
 
@@ -51,7 +61,7 @@ namespace AdvancedDevSample.Application.Services
                 order.AddItem(product, item.Quantity);
             }
 
-            _orderRepository.Add(order);
+            await _orderRepository.SaveAsync(order);
             return order.Id;
         }
 

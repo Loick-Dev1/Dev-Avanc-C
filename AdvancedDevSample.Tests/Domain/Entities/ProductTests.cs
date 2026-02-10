@@ -13,7 +13,7 @@ namespace AdvancedDevSample.Test.Domain.Entities
         public void ChangePrice_Should_Update_Price_When_Product_Is_Active()
         {
             //Arrange : je prepare un produit valide
-            var product = new Product();
+            var product = new Product(Guid.NewGuid(), 10m, true, Guid.NewGuid());
             product.ChangePrice(10);
 
             //Act : execute une action
@@ -26,7 +26,7 @@ namespace AdvancedDevSample.Test.Domain.Entities
         [Fact]
         public void ChangePrice_Should_Throw_Exception_When_Product_Is_Inactive()
         {
-            var product = new Product();
+            var product = new Product(Guid.NewGuid(), 10m, true, Guid.NewGuid());
             product.ChangePrice(10); //valeur initiale
 
             typeof(Product).GetProperty(nameof(Product.IsActive))!.SetValue(product, false);
@@ -39,7 +39,7 @@ namespace AdvancedDevSample.Test.Domain.Entities
         [Fact]
         public void ApplyDiscount_Should_Decrease_Price()
         {
-            var product = new Product();
+            var product = new Product(Guid.NewGuid(), 10m, true, Guid.NewGuid());
             product.ChangePrice(100);
 
             product.ApplyDiscount(30);
@@ -50,7 +50,7 @@ namespace AdvancedDevSample.Test.Domain.Entities
         [Fact]
         public void ApplyDiscount_Should_Throw_When_Resulting_Price_Is_Invalid()
         {
-            var product = new Product();
+            var product = new Product(Guid.NewGuid(), 10m, true, Guid.NewGuid());
             product.ChangePrice(20);
 
             Assert.Throws<DomainException>(() => product.ApplyDiscount(30));

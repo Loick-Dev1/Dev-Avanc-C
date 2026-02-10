@@ -22,5 +22,16 @@ namespace AdvancedDevSample.Tests.API.Integration
         //Helper pour initialiser le test
         public void Seed(Product product)
             => _store[product.Id] = product;
+
+        public Task<IEnumerable<Product>> GetAllAsync()
+        {
+             return Task.FromResult<IEnumerable<Product>>(_store.Values);
+        }
+
+        public Task DeleteAsync(Guid id)
+        {
+            _store.Remove(id);
+            return Task.CompletedTask;
+        }
     }
 }

@@ -10,13 +10,25 @@ namespace AdvancedDevSample.Domain.Entities
         public Guid Id { get; private set; }
         public DateTime OrderDate { get; private set; }
         public decimal TotalAmount { get; private set; }
+        public Guid CustomerId { get; private set; } // Foreign Key
+
         private readonly List<OrderItem> _items = new();
         public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
-        public Order()
+        public Order(Guid customerId)
         {
+            if (customerId == Guid.Empty) throw new DomainException("Customer is required.");
+            
             Id = Guid.NewGuid();
             OrderDate = DateTime.UtcNow;
+            CustomerId = customerId;
+        }
+
+        // For EF Core / Serialization and backward compat (temporary)
+        public Order() 
+        {
+             Id = Guid.NewGuid();
+             OrderDate = DateTime.UtcNow;
         }
 
         public void AddItem(Product product, int quantity)
