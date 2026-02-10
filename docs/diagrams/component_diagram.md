@@ -3,7 +3,9 @@
 This diagram shows the main components of the system and their interactions.
 
 ```mermaid
+```markdown
 componentDiagram
+```
     package "Client Layer" {
         [Web Client/Postman] as Client
     }
