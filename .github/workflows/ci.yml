@@ -42,7 +42,7 @@ jobs:
     - name: Build
       run: dotnet build AdvancedDevSample.Domain.slnx --no-restore --configuration Release
     - name: Test
-      run: dotnet test AdvancedDevSample.Domain.slnx --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      run: dotnet test AdvancedDevSample.Domain.slnx --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
     - name: End Sonar Analysis
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
