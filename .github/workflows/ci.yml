@@ -36,13 +36,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner begin /k:"Loick-Dev1_Dev-Avanc-C" /o:"${{ secrets.SONAR_ORGANIZATION }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+      run: dotnet sonarscanner begin /k:"Loick-Dev1_Dev-Avanc-C" /o:"${{ secrets.SONAR_ORGANIZATION }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
     - name: Restore dependencies
       run: dotnet restore AdvancedDevSample.Domain.slnx
     - name: Build
       run: dotnet build AdvancedDevSample.Domain.slnx --no-restore --configuration Release
     - name: Test
-      run: dotnet test AdvancedDevSample.Domain.slnx --no-build --configuration Release --verbosity normal
+      run: dotnet test AdvancedDevSample.Domain.slnx --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
     - name: End Sonar Analysis
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
