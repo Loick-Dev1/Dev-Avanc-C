@@ -59,13 +59,6 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"];
-if (string.IsNullOrEmpty(secretKey))
-{
-    throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
-}
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -73,6 +66,13 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+    var secretKey = jwtSettings["SecretKey"];
+    if (string.IsNullOrEmpty(secretKey))
+    {
+        throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
+    }
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -121,3 +121,5 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
 await app.RunAsync();
+
+public partial class Program { }

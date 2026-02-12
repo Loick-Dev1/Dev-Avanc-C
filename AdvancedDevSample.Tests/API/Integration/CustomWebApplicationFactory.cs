@@ -8,6 +8,7 @@ using System.Transactions;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Configuration;
 
 namespace AdvancedDevSample.Tests.API.Integration
 {
@@ -23,6 +24,14 @@ namespace AdvancedDevSample.Tests.API.Integration
                 //Ajouter un repository InMemory
                 services.AddSingleton<InMemoryProductRepositoryAsync>();
                 services.AddSingleton<IProductRepositoryAsync>(sp => sp.GetRequiredService<InMemoryProductRepositoryAsync>());
+            });
+
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    {"JwtSettings:SecretKey", "super-secret-key-for-tests-only-1234567890"}
+                });
             });
         }
     }

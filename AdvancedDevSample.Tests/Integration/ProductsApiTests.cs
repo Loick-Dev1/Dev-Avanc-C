@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Xunit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AdvancedDevSample.Tests.Integration
 {
@@ -16,7 +19,16 @@ namespace AdvancedDevSample.Tests.Integration
 
         public ProductsApiTests(WebApplicationFactory<Program> factory)
         {
-            _client = factory.CreateClient();
+            _client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddInMemoryCollection(new Dictionary<string, string>
+                    {
+                        {"JwtSettings:SecretKey", "super-secret-key-for-tests-only-1234567890"}
+                    });
+                });
+            }).CreateClient();
         }
 
         private async Task AuthenticateAsync()
