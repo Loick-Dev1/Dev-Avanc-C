@@ -13,7 +13,7 @@ namespace AdvancedDevSample.Infrastructure.Repositories
     {
         private static readonly ConcurrentDictionary<Guid, Order> _store = new();
 
-        public Order GetById(Guid id)
+        public Order? GetById(Guid id)
         {
             _store.TryGetValue(id, out var order);
             return order;
@@ -54,7 +54,7 @@ namespace AdvancedDevSample.Infrastructure.Repositories
              _store.AddOrUpdate(order.Id, order, (_, __) => order);
         }
 
-        public async Task<Order> GetByIdAsync(Guid id)
+        public async Task<Order?> GetByIdAsync(Guid id)
         {
             return await Task.FromResult(GetById(id));
         }

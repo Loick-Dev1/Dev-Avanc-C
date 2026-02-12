@@ -14,7 +14,7 @@ namespace AdvancedDevSample.Infrastructure.Repositories
         // Simule une table en mémoire. Remplacez par DbContext/EF Core plus tard.
         private static readonly ConcurrentDictionary<Guid, ProductEntity> _store = new();
 
-        public async Task<Product> GetByIdAsync(Guid id)
+        public async Task<Product?> GetByIdAsync(Guid id)
         {
             return await Task.FromResult(GetById(id));
         }
@@ -25,7 +25,7 @@ namespace AdvancedDevSample.Infrastructure.Repositories
             await Task.CompletedTask;
         }
 
-        public Product GetById(Guid id)
+        public Product? GetById(Guid id)
         {
             try
             {

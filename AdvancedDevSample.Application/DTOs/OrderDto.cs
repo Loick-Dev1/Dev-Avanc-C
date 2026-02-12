@@ -8,7 +8,7 @@ namespace AdvancedDevSample.Application.DTOs
         public Guid Id { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
-        public IEnumerable<OrderItemDto> Items { get; set; }
+        public required IEnumerable<OrderItemDto> Items { get; set; }
     }
 
     public class OrderItemDto

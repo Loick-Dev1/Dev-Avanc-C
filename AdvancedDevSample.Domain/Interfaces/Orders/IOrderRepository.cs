@@ -6,7 +6,7 @@ namespace AdvancedDevSample.Domain.Interfaces.Orders
 {
     public interface IOrderRepository
     {
-        Order GetById(Guid id);
+        Order? GetById(Guid id);
         IEnumerable<Order> GetAll();
         void Add(Order order);
         void Update(Order order);

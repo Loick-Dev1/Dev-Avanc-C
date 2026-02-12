@@ -7,7 +7,7 @@ namespace AdvancedDevSample.Domain.Interfaces.Products
 {
     public interface IProductRepositoryAsync
     {
-        Task<Product> GetByIdAsync(Guid id);
+        Task<Product?> GetByIdAsync(Guid id);
         Task<IEnumerable<Product>> GetAllAsync();
         Task SaveAsync(Product product);
         Task DeleteAsync(Guid id);

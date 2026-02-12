@@ -22,8 +22,7 @@ namespace AdvancedDevSample.Infrastructure.Security
             var keyStr = _configuration["JwtSettings:SecretKey"];
             if (string.IsNullOrEmpty(keyStr))
             {
-                // Fallback for dev if not configured, though safer to throw
-                keyStr = "super_secret_key_minimum_16_chars_long_for_hmac_sha256"; 
+                throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyStr));

@@ -18,7 +18,7 @@ namespace AdvancedDevSample.Infrastructure.Repositories
             _store.TryAdd(id, new Customer(id, "John", "Doe", "john.doe@example.com"));
         }
 
-        public Task<Customer> GetByIdAsync(Guid id)
+        public Task<Customer?> GetByIdAsync(Guid id)
         {
             _store.TryGetValue(id, out var customer);
             return Task.FromResult(customer);

@@ -27,15 +27,7 @@ namespace AdvancedDevSample.Application.Services
             // Let's iterate for now.
             
             var customers = await _customerRepository.GetAllAsync();
-            Customer? user = null;
-            foreach(var c in customers)
-            {
-                if(c.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase))
-                {
-                   user = c;
-                   break;
-                }
-            }
+            var user = customers.FirstOrDefault(c => c.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase));
 
             if (user == null)
             {

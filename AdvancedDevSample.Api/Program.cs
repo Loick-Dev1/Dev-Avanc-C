@@ -53,14 +53,18 @@ builder.Services.AddSwaggerGen(options =>
                      Id = "Bearer"
                  }
              },
-             new string[] {}
+             Array.Empty<string>()
         }
     });
 });
 
 // Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? "super_secret_key_minimum_16_chars_long_for_hmac_sha256"; // Fallback same as generator
+var secretKey = jwtSettings["SecretKey"];
+if (string.IsNullOrEmpty(secretKey))
+{
+    throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -116,6 +120,4 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
-app.Run();
-
-public partial class Program { }
+await app.RunAsync();

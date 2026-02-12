@@ -7,7 +7,7 @@ namespace AdvancedDevSample.Domain.Interfaces.Products
 {
     public interface IProductRepository
     {
-        Product GetById(Guid id);
+        Product? GetById(Guid id);
         IEnumerable<Product> GetAll();
         void Add(Product product);
         void Update(Product product);

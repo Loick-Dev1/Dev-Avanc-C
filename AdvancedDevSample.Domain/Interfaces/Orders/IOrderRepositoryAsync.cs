@@ -7,7 +7,7 @@ namespace AdvancedDevSample.Domain.Interfaces.Orders
 {
     public interface IOrderRepositoryAsync
     {
-        Task<Order> GetByIdAsync(Guid id);
+        Task<Order?> GetByIdAsync(Guid id);
         Task<IEnumerable<Order>> GetAllAsync();
         Task SaveAsync(Order order);
     }
