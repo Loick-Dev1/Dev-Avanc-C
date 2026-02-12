@@ -10,7 +10,7 @@ namespace AdvancedDevSample.Tests.API.Integration
     {
         private readonly Dictionary<Guid, Product> _store = new();
 
-        public Task<Product> GetByIdAsync(Guid id)
+        public Task<Product?> GetByIdAsync(Guid id)
             => Task.FromResult(_store.TryGetValue(id, out var p) ? p : null);
 
         public Task SaveAsync(Product product)

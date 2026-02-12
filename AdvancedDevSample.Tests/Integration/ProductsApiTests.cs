@@ -23,7 +23,7 @@ namespace AdvancedDevSample.Tests.Integration
             {
                 builder.ConfigureAppConfiguration((context, config) =>
                 {
-                    config.AddInMemoryCollection(new Dictionary<string, string>
+                    config.AddInMemoryCollection(new Dictionary<string, string?>
                     {
                         {"JwtSettings:SecretKey", "super-secret-key-for-tests-only-1234567890"}
                     });

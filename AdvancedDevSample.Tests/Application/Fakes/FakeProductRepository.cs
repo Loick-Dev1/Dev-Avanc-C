@@ -44,7 +44,7 @@ namespace AdvancedDevSample.Tests.Application.Fakes
             // No-op for fake
         }
 
-        public Task<Product> GetByIdAsync(Guid id) => Task.FromResult(GetById(id));
+        public Task<Product?> GetByIdAsync(Guid id) => Task.FromResult<Product?>(GetById(id));
         public Task<IEnumerable<Product>> GetAllAsync() => Task.FromResult(GetAll());
         public Task SaveAsync(Product product)
         {

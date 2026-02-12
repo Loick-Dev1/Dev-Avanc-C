@@ -67,8 +67,8 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(options =>
 {
     var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-    var secretKey = jwtSettings["SecretKey"];
-    if (string.IsNullOrEmpty(secretKey))
+    var jwtKey = jwtSettings["SecretKey"];
+    if (string.IsNullOrEmpty(jwtKey))
     {
         throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
     }
@@ -81,7 +81,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"] ?? "AdvancedDevSample",
         ValidAudience = jwtSettings["Audience"] ?? "AdvancedDevSampleUsers",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
 
@@ -122,4 +122,4 @@ app.MapControllers();
 
 await app.RunAsync();
 
-public partial class Program { }
+

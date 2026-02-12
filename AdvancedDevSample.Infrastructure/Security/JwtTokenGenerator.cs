@@ -19,13 +19,13 @@ namespace AdvancedDevSample.Infrastructure.Security
 
         public string GenerateToken(Guid userId, string email, string role)
         {
-            var keyStr = _configuration["JwtSettings:SecretKey"];
-            if (string.IsNullOrEmpty(keyStr))
+            var jwtKey = _configuration["JwtSettings:SecretKey"];
+            if (string.IsNullOrEmpty(jwtKey))
             {
                 throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyStr));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
