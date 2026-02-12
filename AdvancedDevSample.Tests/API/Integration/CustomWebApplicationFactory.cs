@@ -30,7 +30,9 @@ namespace AdvancedDevSample.Tests.API.Integration
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    {"JwtSettings:SecretKey", "super-secret-key-for-tests-only-1234567890"}
+                    {"JwtSettings:SecretKey", "super-secret-key-for-tests-only-1234567890"},
+                    {"JwtSettings:Issuer", "AdvancedDevSample"},
+                    {"JwtSettings:Audience", "AdvancedDevSampleUsers"}
                 });
             });
         }

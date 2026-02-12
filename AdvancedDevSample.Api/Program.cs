@@ -59,6 +59,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Authentication
+// Authentication
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,9 +69,13 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-    var jwtKey = jwtSettings["SecretKey"];
-    if (string.IsNullOrEmpty(jwtKey))
+    // We can resolve the settings here via ServiceProvider if we wanted, 
+    // but typically we can just bind to the configuration section again 
+    // or rely on PostConfigure. For Program.cs logic simplicity:
+    var jwtSettings = new JwtSettings();
+    builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
+
+    if (string.IsNullOrEmpty(jwtSettings.SecretKey))
     {
         throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
     }
@@ -79,9 +86,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"] ?? "AdvancedDevSample",
-        ValidAudience = jwtSettings["Audience"] ?? "AdvancedDevSampleUsers",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        ValidIssuer = jwtSettings.Issuer ?? "AdvancedDevSample",
+        ValidAudience = jwtSettings.Audience ?? "AdvancedDevSampleUsers",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
     };
 });
 
