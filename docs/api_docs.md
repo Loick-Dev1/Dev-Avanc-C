@@ -35,3 +35,19 @@ For interactive documentation, please visit:
 | GET | `/api/orders` | Get all orders |
 | GET | `/api/orders/{id}` | Get order by ID |
 | POST | `/api/orders` | Create a new order |
+
+### Customers
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/customers` | Get all customers |
+| GET | `/api/customers/{id}` | Get customer by ID |
+| POST | `/api/customers` | Create a new customer |
+
+### Providers
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/providers` | Get all providers |
+| GET | `/api/providers/{id}` | Get provider by ID |
+| POST | `/api/providers` | Create a new provider |
