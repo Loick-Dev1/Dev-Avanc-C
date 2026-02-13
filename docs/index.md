@@ -1,19 +1,19 @@
 # AdvancedDevSample Documentation
 
-Welcome to the technical documentation for the **AdvancedDevSample** project.
+Bienvenue dans la documentation technique du projet **AdvancedDevSample**.
 
-This project demonstrates a Clean/Onion Architecture implementation in .NET.
+Ce projet démontre une implémentation de l'architecture Clean/Onion en .NET.
 
-## Key Features
+## Principales caractéristiques
 
-* **Layered Architecture**: Domain, Application, Infrastructure, API.
-* **Domain-Driven Design (DDD)**: Rich Domain Models, Aggregates.
-* **CQRS Pattern**: Separation of Commands and Queries (via Services).
-* **Repository Pattern**: Abstraction of data access.
-* **Security**: JWT Authentication & Role-Based Authorization.
-* **Full Ecosystem**: Products, Orders, Customers, Providers.
+* **Architecture en couches** : Domaine, Application, Infrastructure, API.
+* **Conception pilotée par le domaine (DDD)** : Modèles de domaine riches, Agrégats.
+* **Pattern CQRS** : Séparation des Commandes et Requêtes (via les Services).
+* **Pattern Repository** : Abstraction de l'accès aux données.
+* **Sécurité** : Authentification JWT et Autorisation basée sur les rôles.
+* **Écosystème complet** : Produits, Commandes, Clients, Fournisseurs.
 
-## Documentation Sections
+## Sections de documentation
 
 * [Guide du Développeur](developer_guide.md) - **Commencez ici !**
 * [Architecture Overview](diagrams/architecture.md)
