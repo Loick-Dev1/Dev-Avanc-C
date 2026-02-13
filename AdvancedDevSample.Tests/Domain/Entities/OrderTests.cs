@@ -46,5 +46,11 @@ namespace AdvancedDevSample.Tests.Domain.Entities
 
             Assert.Throws<DomainException>(() => order.AddItem(product, 0));
         }
+
+        [Fact]
+        public void Constructor_Should_Throw_If_Customer_Invalid()
+        {
+            Assert.Throws<DomainException>(() => new Order(Guid.Empty));
+        }
     }
 }

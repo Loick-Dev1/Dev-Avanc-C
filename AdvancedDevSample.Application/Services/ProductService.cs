@@ -75,6 +75,8 @@ namespace AdvancedDevSample.Application.Services
 
         public async Task DeleteProductAsync(Guid productId)
         {
+            var product = await _repository.GetByIdAsync(productId);
+            if (product == null) throw new ApplicationServiceException("Produit introuvable", System.Net.HttpStatusCode.NotFound);
             await _repository.DeleteAsync(productId);
         }
 

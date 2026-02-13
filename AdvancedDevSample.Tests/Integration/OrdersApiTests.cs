@@ -81,6 +81,52 @@ namespace AdvancedDevSample.Tests.Integration
         }
 
         [Fact]
+        public async Task CreateOrder_Should_Return_BadRequest_When_ProductNotFound()
+        {
+            await AuthenticateAsync();
+            var customerId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var orderRequest = new CreateOrderRequest
+            {
+                CustomerId = customerId,
+                Items = new List<CreateOrderItemRequest>
+                {
+                    new CreateOrderItemRequest { ProductId = Guid.NewGuid(), Quantity = 1 }
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/orders", orderRequest);
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateOrder_Should_Return_BadRequest_When_ProductInactive()
+        {
+            await AuthenticateAsync();
+            
+            // 1. Create Inactive Product
+            var providerId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var createProductRequest = new CreateProductRequest { Price = 100, IsActive = false, ProviderId = providerId };
+            var productResponse = await _client.PostAsJsonAsync("/api/products", createProductRequest);
+            var productLocation = productResponse.Headers.Location?.ToString();
+            var productId = Guid.Parse(productLocation!.Substring(productLocation.LastIndexOf('/') + 1));
+
+            // 2. Try to order it
+            var customerId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var orderRequest = new CreateOrderRequest
+            {
+                CustomerId = customerId,
+                Items = new List<CreateOrderItemRequest>
+                {
+                    new CreateOrderItemRequest { ProductId = productId, Quantity = 1 }
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/orders", orderRequest);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
         public async Task GetAllOrders_Should_Return_Ok()
         {
             await AuthenticateAsync();
@@ -132,6 +178,14 @@ namespace AdvancedDevSample.Tests.Integration
             Assert.Equal(orderId, order.Id);
             Assert.NotEmpty(order.Items);
             Assert.Equal(50, order.TotalAmount);
+        }
+
+        [Fact]
+        public async Task GetOrder_Should_Return_NotFound_When_Missing()
+        {
+            await AuthenticateAsync();
+            var response = await _client.GetAsync($"/api/orders/{Guid.NewGuid()}");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

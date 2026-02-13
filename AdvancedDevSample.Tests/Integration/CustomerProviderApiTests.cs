@@ -54,6 +54,25 @@ namespace AdvancedDevSample.Tests.Integration
         }
 
         [Fact]
+        public async Task GetCustomer_Should_Return_Ok_When_Exists()
+        {
+            await AuthenticateAsync();
+            var seededId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var response = await _client.GetAsync($"/api/customers/{seededId}");
+            response.EnsureSuccessStatusCode();
+            var customer = await response.Content.ReadFromJsonAsync<CustomerDto>();
+            Assert.Equal(seededId, customer!.Id);
+        }
+
+        [Fact]
+        public async Task GetCustomer_Should_Return_NotFound_When_Missing()
+        {
+            await AuthenticateAsync();
+            var response = await _client.GetAsync($"/api/customers/{Guid.NewGuid()}");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task CreateCustomer_ShouldReturnCreated()
         {
             await AuthenticateAsync();
@@ -70,6 +89,20 @@ namespace AdvancedDevSample.Tests.Integration
         }
 
         [Fact]
+        public async Task CreateCustomer_Should_Return_BadRequest_When_Invalid()
+        {
+            await AuthenticateAsync();
+            var request = new CreateCustomerRequest 
+            { 
+                FirstName = "", // Invalid
+                LastName = "Doe", 
+                Email = "invalid-email" 
+            };
+            var response = await _client.PostAsJsonAsync("/api/customers", request);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
         public async Task GetAllProviders_ShouldReturnOk_And_IncludeSeededData()
         {
             await AuthenticateAsync();
@@ -78,6 +111,25 @@ namespace AdvancedDevSample.Tests.Integration
             var providers = await response.Content.ReadFromJsonAsync<IEnumerable<ProviderDto>>();
             Assert.NotNull(providers);
             Assert.NotEmpty(providers); // Should contain seeded "Acme Corp"
+        }
+
+        [Fact]
+        public async Task GetProvider_Should_Return_Ok_When_Exists()
+        {
+            await AuthenticateAsync();
+            var seededId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var response = await _client.GetAsync($"/api/providers/{seededId}");
+            response.EnsureSuccessStatusCode();
+            var provider = await response.Content.ReadFromJsonAsync<ProviderDto>();
+            Assert.Equal(seededId, provider!.Id);
+        }
+
+        [Fact]
+        public async Task GetProvider_Should_Return_NotFound_When_Missing()
+        {
+            await AuthenticateAsync();
+            var response = await _client.GetAsync($"/api/providers/{Guid.NewGuid()}");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
@@ -94,6 +146,20 @@ namespace AdvancedDevSample.Tests.Integration
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.NotNull(response.Headers.Location);
+        }
+
+        [Fact]
+        public async Task CreateProvider_Should_Return_BadRequest_When_Invalid()
+        {
+            await AuthenticateAsync();
+            var request = new CreateProviderRequest 
+            { 
+                Name = "", // Invalid
+                Email = "bad-email",
+                ContactInfo = ""
+            };
+            var response = await _client.PostAsJsonAsync("/api/providers", request);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
