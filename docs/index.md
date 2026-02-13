@@ -15,6 +15,7 @@ This project demonstrates a Clean/Onion Architecture implementation in .NET.
 
 ## Documentation Sections
 
+* [Guide du Développeur](developer_guide.md) - **Commencez ici !**
 * [Architecture Overview](diagrams/architecture.md)
 * [Component Diagram](diagrams/component_diagram.md)
 * [Class Diagram](diagrams/class_diagram.md)

@@ -12,6 +12,7 @@ markdown_extensions:
 
 nav:
   - Accueil: index.md
+  - Guide du Développeur: developer_guide.md
   - Architecture: diagrams/architecture.md
   - Diagrammes de Classes: diagrams/class_diagram.md
   - Diagrammes de Séquence: diagrams/sequence_diagram.md
