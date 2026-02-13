@@ -50,6 +50,12 @@ namespace AdvancedDevSample.Domain.Entities
 
         public void ApplyDiscount(decimal discount)
         {
+            if (discount <= 0)
+                throw new DomainException("Le rabais doit être positif.");
+
+            if (discount > Price)
+                throw new DomainException("Le rabais ne peut pas être supérieur au prix.");
+
             ChangePrice(Price - discount);
         }
 
