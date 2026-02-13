@@ -1,6 +1,8 @@
 site_name: AdvancedDevSample Documentation
 theme:
   name: material
+  language: fr
+
 markdown_extensions:
   - pymdownx.superfences:
       custom_fences:
@@ -9,10 +11,10 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 
 nav:
-  - Home: index.md
+  - Accueil: index.md
   - Architecture: diagrams/architecture.md
-  - Class Diagrams: diagrams/class_diagram.md
-  - Sequence Diagrams: diagrams/sequence_diagram.md
-  - Component Diagrams: diagrams/component_diagram.md
-  - Flow Diagrams: diagrams/flow_diagram.md
-  - API Reference: api_docs.md
+  - Diagrammes de Classes: diagrams/class_diagram.md
+  - Diagrammes de Séquence: diagrams/sequence_diagram.md
+  - Diagrammes de Composants: diagrams/component_diagram.md
+  - Diagrammes de Flux: diagrams/flow_diagram.md
+  - Référence API: api_docs.md
